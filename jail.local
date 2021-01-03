@@ -1,0 +1,47 @@
+# add local netwrok to ignoreip section in defailt
+ignoreip = 127.0.0.1/8 ::1 10.0.106.1/24
+
+#update default action
+action = %(action_)s
+         pushover-notify[name=%(__name__)s, logpath=%(logpath)s]
+         
+#add the following for nginx
+[http-get-dos]
+enabled = true
+port = http,https
+logpath = /var/log/nginx/access.log
+filter = http-get-dos
+maxretry = 100
+#action = iptables-multiport[name=http-get-dos, port="http,https", protocol=tcp]
+findtime = 60
+bantime = 7200
+
+[nginx-botsearch]
+enable = true
+port     = http,https
+#logpath  = %(nginx_error_log)s
+logpath = /var/log/nginx*/*access*.log
+maxretry = 2
+
+[nginx-noscript]
+enabled = true
+#action = iptables-multiport[name=NoScript, port="http,https"]
+filter = nginx-noscript
+logpath = /var/log/nginx*/*access*.log
+maxretry = 1
+#bantime  = 86400 # 1 day
+
+[nginx-proxy]
+enabled = true
+#action = iptables-multiport[name=NoProxy, port="http,https"]
+filter = nginx-proxy
+logpath = /var/log/nginx*/*access*.log
+maxretry = 0
+#bantime  = 86400 # 1 day
+
+[nginx-badbots]
+enabled  = true
+filter = apache-badbots
+#action = iptables-multiport[name=BadBots, port="http,https"]
+logpath = /var/log/nginx*/*access*.log
+maxretry = 1
