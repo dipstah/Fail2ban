@@ -1,0 +1,46 @@
+# Fail2Ban configuration file
+#pushover-notify.local go in /etc/fail2ban/action.d/
+
+[Definition]
+
+# Notify on Startup
+actionstart = <curl> -s -F "token=<pushover_token>"  -F "user=<pushover_user>" -F "title=<name>: started on `uname -n`" -F "message=The jail <b><name></b> has been started successfully." -F "priority=-1" -F "html=1" -F "sound=bike" <pushover_api>
+
+
+# Notify on Shutdown
+actionstop = <curl> -s -F "token=<pushover_token>"  -F "user=<pushover_user>" -F "title=<name>: stopped on `uname -n`" -F "message=The jail <b><name></b> has been stopped." -F "priority=1" -F "html=1" -F "sound=spacealarm" <pushover_api>
+
+#
+actioncheck =
+
+# Notify on Banned
+actionban = <curl> -s -F "token=<pushover_token>"  -F "user=<pushover_user>" -F "title=<name>: banned <ip> from `uname -n`" -F "message=The IP <b><ip></b> has just been banned by Fail2Ban after <b><failures></b> attempts against <b><name></b>." -F "priority=1" -F "html=1" -F "url_title=WHOIS: <ip>" -F "url=<whois_url>/<ip>" -F "sound=siren" <pushover_api>
+
+
+# Notify on Unbanned
+actionunban = <curl> -s -F "token=<pushover_token>"  -F "user=<pushover_user>" -F "title=<name>: unbanned <ip> from `uname -n`" -F "message=The IP <b><ip></b> has just been released from jail." -F "html=1"  -F "url_title=WHOIS: <ip>" -F "url=<whois_url>/<ip>" -F "sound=magic" <pushover_api>
+
+
+[Init]
+
+# Defaut name of the chain
+name = default
+
+# POST an HTTPS request API
+pushover_api="https://api.pushover.net/1/messages"
+
+# Curl path
+curl="/usr/bin/curl"
+
+#curl Options
+curl_opts=""
+
+# WHOIS
+ripe_search="https://apps.db.ripe.net/search/query.html?searchtext="
+whois_url="http://whois.domaintools.com"
+
+# (required) - your application's API token
+pushover_token="TOKENHERE"
+
+# (required) - the user/group key (not e-mail address) of your user (or you)
+pushover_user="USERTOKENHERE"
